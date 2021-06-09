@@ -1,0 +1,38 @@
+<p class="text-xl font-bold my-4">Log in</p>
+
+<%= form_for @conn, Routes.user_session_path(@conn, :create), [as: :user], fn f -> %>
+  <%= if @error_message do %>
+    <div class="alert alert-danger">
+      <p><%= @error_message %></p>
+    </div>
+  <% end %>
+
+  <div class="mb-2">
+    <div class="text-sm"><%= label f, :name %></div>
+    <div>
+      <%= text_input f, :name, required: true,
+            class: "border border-gray-600 rounded-md pl-1 focus:outline-none focus:ring focus:ring-gray-400" %>
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <div class="text-sm"><%= label f, :password %></div>
+    <div>
+      <%= password_input f, :password, required: true,
+            class: "border border-gray-600 rounded-md pl-1 focus:outline-none focus:ring focus:ring-gray-400" %>
+    </div>
+  </div>
+
+  <div class="flex items-center">
+    <div class="mr-2 flex items-center">
+      <%= checkbox f, :remember_me,
+            class: "border border-gray-600 rounded-md focus:outline-none focus:ring focus:ring-gray-400" %>
+    </div>
+    <div class="text-sm"><%= label f, :remember_me, "Keep me logged in for 60 days" %></div>
+  </div>
+
+  <div class="mt-6">
+    <%= submit "Log me in!",
+          class: "border border-gray-600 bg-gray-700 text-gray-200 rounded-md px-4 focus:outline-none focus:ring focus:ring-gray-400" %>
+  </div>
+<% end %>

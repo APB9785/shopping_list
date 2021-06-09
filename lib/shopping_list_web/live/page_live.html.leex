@@ -1,0 +1,96 @@
+<!-- JS Hook for changing background color -->
+<div id="bg-color-setter"
+     phx-hook="BackgroundColorChange"
+     data-value="<%= @bg_color %>"></div>
+
+<div class="flex justify-center">
+  <%= live_component @socket, ShoppingListWeb.UserMenuComponent,
+        active_user: @active_user %>
+</div>
+
+<%= for category <- @category_list do %>
+  <div class="flex justify-center w-11/12 md:w-1/2 mb-2">
+    <%= live_component @socket, ShoppingListWeb.CategoryComponent,
+          category: category,
+          visible: category.id in @visible_categories,
+          active_user: @active_user,
+          id: "category-#{category.id}-component" %>
+  </div>
+<% end %>
+
+<div class="w-11/12 md:w-1/2">
+  <%= if @add_category do %>
+    <%= f = form_for @category_changeset, "#", phx_submit: "save_category" %>
+      <div class="grid justify-items-center px-2">
+        <%= text_input f, :name,
+              class: text_input_style(@active_user),
+              phx_hook: "AutoFocus",
+              autocomplete: "off" %>
+        <%= error_tag f, :name %>
+        <%= submit "Create new list",
+              class: category_button(@active_user) %>
+        <div class="cursor-pointer mt-2 md:hover:underline" phx-click="cancel_category">
+          Cancel
+        </div>
+      </div>
+    </form>
+  <% else %>
+    <div class="flex justify-center">
+      <button type="button" phx-click="new_category"
+              class="border border-dashed border-gray-700 px-1">
+        + New List
+      </button>
+    </div>
+  <% end %>
+</div>
+
+<!-- MODAL COMPONENTS -->
+
+<%= if @live_action == :settings do %>
+  <div class="phx-modal">
+    <div class="phx-modal-content relative">
+      <%= live_patch raw("&times;"),
+            to: Routes.live_path(@socket, ShoppingListWeb.PageLive),
+            class: "absolute text-lg top-0 right-2" %>
+      <p class="font-bold text-lg mb-4">Settings</p>
+      <%= f = form_for @theme_changeset, "#", phx_submit: "change_theme" %>
+        <%= label f, "Theme: ", class: "mr-2" %>
+        <%= select f, :theme, theme_list(), class: select_style(@active_user) %>
+
+        <%= submit "Change theme", class: change_theme_button(@active_user) %>
+      </form>
+    </div>
+  </div>
+<% end %>
+
+<%= case @clear_category do %>
+<% {:empty, category_id} -> %>
+  <div class="phx-modal">
+    <div class="phx-modal-content relative grid justify-items-center">
+      <div class="absolute text-lg top-0 right-2 cursor-pointer"
+           phx-click="cancel_delete">
+        &times;
+      </div>
+      <p class="font-bold text-lg mb-8">Confirm list delete?</p>
+      <div phx-click="confirm_delete"
+           phx-value-id="<%= category_id %>"
+              class="<%= category_button(@active_user) %>">
+        Delete list
+      </div>
+      <div phx-click="cancel_delete"
+           class="cursor-pointer text-sm text-gray-600 my-8 underline md:no-underline md:hover:underline">
+        Nevermind, keep the list
+      </div>
+    </div>
+  </div>
+
+<% %Category{} -> %>
+  <%= live_component @socket, ShoppingListWeb.ClearCategoryModal,
+        active_user: @active_user,
+        category: @clear_category,
+        category_list: @category_list,
+        id: "clear-category-modal" %>
+
+<% nil -> %>
+
+<% end %>

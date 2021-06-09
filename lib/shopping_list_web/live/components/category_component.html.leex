@@ -1,0 +1,55 @@
+<div class="<%= background_style(@active_user) %>">
+  <div class="<%= header_style(@active_user) %>">
+    <div class="pr-2 cursor-pointer hover:underline"
+         phx-click="show_hide"
+         phx-value-id="<%= @category.id %>"
+         phx-value-action="<%= if @visible, do: "hide", else: "show" %>">
+      <%= if @visible, do: "-", else: "+" %>
+      <%= @category.name %>
+    </div>
+    <div class="flex mr-2">
+      <div class="text-sm mr-3 cursor-pointer"
+           phx-click="new_item"
+           phx-target="<%= @myself %>">
+        +item
+      </div>
+      <div class="text-sm cursor-pointer"
+           phx-click="clear_list"
+           phx-target="<%= @myself %>">
+        clear
+      </div>
+    </div>
+  </div>
+
+  <%= if @visible do %>
+    <%= for item <- @category.items do %>
+      <%= live_component @socket, ShoppingListWeb.ItemComponent,
+            id: "item-#{item.id}-component",
+            item: item,
+            active_user: @active_user %>
+    <% end %>
+  <% end %>
+
+  <%= if @new_item do %>
+    <div class="my-2 ml-3">
+      <%= f = form_for @item_changeset, "#",
+                phx_submit: "save_item",
+                phx_target: @myself %>
+        <div class="md:flex">
+          <%= text_input f, :name, class: input_style(@active_user), phx_hook: "AutoFocus" %>
+          <%= error_tag f, :name %>
+
+          <div class="flex mt-4 md:mt-0">
+            <div class="ml-2 mr-4 md:mx-2">
+              <%= submit "Add item", class: button_style(@active_user) %>
+            </div>
+            <div class="cursor-pointer" phx-click="cancel_item" phx-target="<%= @myself %>">
+              Cancel
+            </div>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  <% end %>
+</div>

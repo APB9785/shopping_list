@@ -1,0 +1,53 @@
+<div class="phx-modal">
+  <div class="phx-modal-content relative grid justify-items-center">
+
+    <div class="absolute text-lg top-0 right-2 cursor-pointer"
+         phx-click="cancel_delete">
+      &times;
+    </div>
+
+    <p class="font-bold text-lg mb-4 text-center">
+      There are still unpurchased items in this list!
+    </p>
+
+    <div class="text-left">
+      <%= for item <- @category.items do %>
+        <%= if item.needed do %>
+          <p class="text-sm subpixel-antialiased italic mb-1">
+            · <%= item.name %>
+          </p>
+        <% end %>
+      <% end %>
+    </div>
+
+    <p class="text-center mt-4">
+      What do you want to do with these items?
+    </p>
+
+    <div class="flex mt-6 mb-8">
+      <%= f = form_for @changeset, "#",
+                phx_submit: "move_items",
+                phx_target: @myself %>
+        <div>
+          <%= select f, :category_id, @category_select,
+                prompt: "Move to list",
+                class: select_style(@active_user) %>
+          <%= submit "Move", class: button_style(@active_user) %>
+        </div>
+      </form>
+    </div>
+
+    <button class="<%= button_style(@active_user) %>"
+            type="button"
+            phx-click="confirm_delete"
+            phx-target="<%= @myself %>">
+      Delete items
+    </button>
+
+    <div phx-click="cancel_delete"
+         class="cursor-pointer text-sm text-gray-700 my-8 underline md:no-underline md:hover:underline">
+      Nevermind, keep the list
+    </div>
+
+  </div>
+</div>
