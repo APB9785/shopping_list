@@ -79,8 +79,8 @@ defmodule ShoppingList.Accounts do
 
   """
   def register_user(attrs) do
-    %User{}
-    |> User.registration_changeset(attrs)
+    Map.merge(%{theme: "purple"}, attrs)
+    |> then(&User.registration_changeset(%User{}, &1))
     |> Repo.insert()
   end
 
