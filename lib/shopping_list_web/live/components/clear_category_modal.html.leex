@@ -40,6 +40,7 @@
     <button class="<%= button_style(@active_user) %>"
             type="button"
             phx-click="confirm_delete"
+            phx-value-id="<%= @category.id %>"
             phx-target="<%= @myself %>">
       Delete items
     </button>

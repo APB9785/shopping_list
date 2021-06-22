@@ -26,9 +26,8 @@ defmodule ShoppingListWeb.ClearCategoryModal do
   end
 
   def handle_event("move_items", %{"item" => %{"category_id" => id}}, socket) do
-    String.to_integer(id)
-    |> then(&Items.change_category(socket.assigns.category.id, &1))
-
+    id = String.to_integer(id)
+    Items.change_category(socket.assigns.category.id, id)
     Categories.delete_category(socket.assigns.category)
     Phoenix.PubSub.broadcast(ShoppingList.PubSub, "pubsub", {:update_lists})
     send(self(), {:close_clear_modal})
@@ -36,9 +35,10 @@ defmodule ShoppingListWeb.ClearCategoryModal do
     {:noreply, socket}
   end
 
-  def handle_event("confirm_delete", _params, socket) do
+  def handle_event("confirm_delete", %{"id" => id}, socket) do
+    id = String.to_integer(id)
     Categories.delete_category(socket.assigns.category)
-    Phoenix.PubSub.broadcast(ShoppingList.PubSub, "pubsub", {:update_lists})
+    Phoenix.PubSub.broadcast(ShoppingList.PubSub, "pubsub", {:category_deleted, id})
     send(self(), {:close_clear_modal})
 
     {:noreply, socket}

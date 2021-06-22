@@ -106,6 +106,10 @@ defmodule ShoppingListWeb.PageLive do
      )}
   end
 
+  def handle_info({:update_lists}, socket) do
+    {:noreply, assign(socket, category_list: Categories.list_categories())}
+  end
+
   def handle_info({:update_one_category, id}, socket) when is_integer(id) do
     Categories.get_category!(id)
     |> then(
