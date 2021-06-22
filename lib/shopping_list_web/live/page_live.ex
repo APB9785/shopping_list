@@ -34,8 +34,8 @@ defmodule ShoppingListWeb.PageLive do
 
   def handle_event("save_category", %{"category" => params}, socket) do
     case Categories.create_category(params) do
-      {:ok, %Category{}} ->
-        Phoenix.PubSub.broadcast(ShoppingList.PubSub, "pubsub", {:update_lists})
+      {:ok, %Category{} = category} ->
+        Phoenix.PubSub.broadcast(ShoppingList.PubSub, "pubsub", {:category_added, category})
         {:noreply, assign(socket, add_category: false)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -87,6 +87,14 @@ defmodule ShoppingListWeb.PageLive do
         new_visible = socket.assigns.visible_categories -- [String.to_integer(id)]
         {:noreply, assign(socket, visible_categories: new_visible)}
     end
+  end
+
+  def handle_info({:category_added, category}, socket) do
+    {:noreply,
+     assign(socket,
+       category_list: socket.assigns.category_list ++ [category],
+       visible_categories: [category.id | socket.assigns.visible_categories]
+     )}
   end
 
   def handle_info({:update_lists}, socket) do
