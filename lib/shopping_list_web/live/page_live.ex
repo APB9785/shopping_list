@@ -35,6 +35,7 @@ defmodule ShoppingListWeb.PageLive do
   def handle_event("save_category", %{"category" => params}, socket) do
     case Categories.create_category(params) do
       {:ok, %Category{} = category} ->
+        category = Map.put(category, :items, [])
         Phoenix.PubSub.broadcast(ShoppingList.PubSub, "pubsub", {:category_added, category})
         {:noreply, assign(socket, add_category: false)}
 
@@ -67,11 +68,11 @@ defmodule ShoppingListWeb.PageLive do
   end
 
   def handle_event("confirm_delete", %{"id" => id}, socket) do
-    String.to_integer(id)
-    |> Categories.get_category!()
-    |> Categories.delete_category()
+    id = String.to_integer(id)
 
-    Phoenix.PubSub.broadcast(ShoppingList.PubSub, "pubsub", {:update_lists})
+    id |> Categories.get_category!() |> Categories.delete_category()
+
+    Phoenix.PubSub.broadcast(ShoppingList.PubSub, "pubsub", {:category_deleted, id})
     send(self(), {:close_clear_modal})
 
     {:noreply, socket}
@@ -97,8 +98,12 @@ defmodule ShoppingListWeb.PageLive do
      )}
   end
 
-  def handle_info({:update_lists}, socket) do
-    {:noreply, assign(socket, category_list: Categories.list_categories())}
+  def handle_info({:category_deleted, category_id}, socket) do
+    {:noreply,
+     assign(socket,
+       category_list: Enum.reject(socket.assigns.category_list, &(&1.id == category_id)),
+       visible_categories: socket.assigns.visible_categories -- [category_id]
+     )}
   end
 
   def handle_info({:update_one_category, id}, socket) when is_integer(id) do
