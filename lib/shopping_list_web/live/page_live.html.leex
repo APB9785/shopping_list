@@ -18,7 +18,7 @@
   </div>
 <% end %>
 
-<div class="w-11/12 md:w-1/2">
+<div class="w-11/12 md:w-1/2 mb-4">
   <%= if @add_category do %>
     <%= f = form_for @category_changeset, "#", phx_submit: "save_category" %>
       <div class="grid justify-items-center px-2">
