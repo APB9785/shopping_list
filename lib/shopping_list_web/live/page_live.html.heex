@@ -1,7 +1,7 @@
 <!-- JS Hook for changing background color -->
 <div id="bg-color-setter"
      phx-hook="BackgroundColorChange"
-     data-value="<%= @bg_color %>"></div>
+     data-value={@bg_color}></div>
 
 <div class="flex justify-center">
   <%= live_component @socket, ShoppingListWeb.UserMenuComponent,
@@ -20,7 +20,7 @@
 
 <div class="w-11/12 md:w-1/2 mb-4">
   <%= if @add_category do %>
-    <%= f = form_for @category_changeset, "#", phx_submit: "save_category" %>
+    <.form let={f} for={@category_changeset} action="save_category">
       <div class="grid justify-items-center px-2">
         <%= text_input f, :name,
               class: text_input_style(@active_user),
@@ -33,7 +33,7 @@
           Cancel
         </div>
       </div>
-    </form>
+    </.form>
   <% else %>
     <div class="flex justify-center">
       <button type="button" phx-click="new_category"
@@ -53,12 +53,12 @@
             to: Routes.live_path(@socket, ShoppingListWeb.PageLive),
             class: "absolute text-lg top-0 right-2" %>
       <p class="font-bold text-lg mb-4">Settings</p>
-      <%= f = form_for @theme_changeset, "#", phx_submit: "change_theme" %>
+      <.form let={f} for={@theme_changeset} action="change_theme">
         <%= label f, "Theme: ", class: "mr-2" %>
         <%= select f, :theme, theme_list(), class: select_style(@active_user) %>
 
         <%= submit "Change theme", class: change_theme_button(@active_user) %>
-      </form>
+      </.form>
     </div>
   </div>
 <% end %>
@@ -73,8 +73,8 @@
       </div>
       <p class="font-bold text-lg mb-8">Confirm list delete?</p>
       <div phx-click="confirm_delete"
-           phx-value-id="<%= category_id %>"
-              class="<%= category_button(@active_user) %>">
+           phx-value-id={category_id}
+              class={category_button(@active_user)}>
         Delete list
       </div>
       <div phx-click="cancel_delete"

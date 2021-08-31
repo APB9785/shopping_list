@@ -25,23 +25,21 @@
     </p>
 
     <div class="flex mt-6 mb-8">
-      <%= f = form_for @changeset, "#",
-                phx_submit: "move_items",
-                phx_target: @myself %>
+      <.form let={f} for={@changeset} action="move_items">
         <div>
           <%= select f, :category_id, @category_select,
                 prompt: "Move to list",
                 class: select_style(@active_user) %>
           <%= submit "Move", class: button_style(@active_user) %>
         </div>
-      </form>
+      </.form>
     </div>
 
-    <button class="<%= button_style(@active_user) %>"
+    <button class={button_style(@active_user)}
             type="button"
             phx-click="confirm_delete"
-            phx-value-id="<%= @category.id %>"
-            phx-target="<%= @myself %>">
+            phx-value-id={@category.id}
+            phx-target={@myself}>
       Delete items
     </button>
 

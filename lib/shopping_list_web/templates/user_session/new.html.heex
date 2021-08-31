@@ -1,6 +1,6 @@
 <p class="text-xl font-bold my-4">Log in</p>
 
-<%= form_for @conn, Routes.user_session_path(@conn, :create), [as: :user], fn f -> %>
+<.form let={f} for={@conn} action={Routes.user_session_path(@conn, :create)} as="user">
   <%= if @error_message do %>
     <div class="alert alert-danger">
       <p><%= @error_message %></p>
@@ -35,4 +35,4 @@
     <%= submit "Log me in!",
           class: "border border-gray-600 bg-gray-700 text-gray-200 rounded-md px-4 focus:outline-none focus:ring focus:ring-gray-400" %>
   </div>
-<% end %>
+</.form>
