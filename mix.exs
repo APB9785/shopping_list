@@ -4,10 +4,10 @@ defmodule ShoppingList.MixProject do
   def project do
     [
       app: :shopping_list,
-      version: "1.1.0",
+      version: "1.1.1",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: [:gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -65,16 +65,14 @@ defmodule ShoppingList.MixProject do
       setup: [
         "deps.get",
         "ecto.setup",
-        "cmd npm install --prefix assets",
-        "cmd --cd assets npm install"
+        "cmd npm install --prefix assets"
       ],
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.deploy": [
         "cmd --cd assets npm run deploy",
-        "esbuild default --minify",
-        "phx.digest"
+        "esbuild default --minify"
       ]
     ]
   end

@@ -1,10 +1,11 @@
 module.exports = {
-  mode: 'jit',
+  mode: "jit",
   purge: [
-    './js/**/*.js',
-    '../lib/*_web/**/*.*ex'
+    "./js/**/*.js",
+    "../lib/*_web/**/*.*ex"
   ],
   theme: {
+    extend: {},
   },
   variants: {
     extend: {},
