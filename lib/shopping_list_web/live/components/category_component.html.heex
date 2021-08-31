@@ -32,7 +32,7 @@
 
   <%= if @new_item do %>
     <div class="my-2 ml-3">
-      <.form let={f} for={@item_changeset} action="save_item">
+      <.form let={f} for={@item_changeset} phx_submit="save_item">
         <div class="md:flex">
           <%= text_input f, :name, class: input_style(@active_user), phx_hook: "AutoFocus" %>
           <%= error_tag f, :name %>

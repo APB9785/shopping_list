@@ -25,7 +25,7 @@
     </p>
 
     <div class="flex mt-6 mb-8">
-      <.form let={f} for={@changeset} action="move_items">
+      <.form let={f} for={@changeset} phx_submit="move_items">
         <div>
           <%= select f, :category_id, @category_select,
                 prompt: "Move to list",

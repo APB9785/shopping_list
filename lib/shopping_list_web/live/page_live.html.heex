@@ -20,7 +20,7 @@
 
 <div class="w-11/12 md:w-1/2 mb-4">
   <%= if @add_category do %>
-    <.form let={f} for={@category_changeset} action="save_category">
+    <.form let={f} for={@category_changeset} phx_submit="save_category">
       <div class="grid justify-items-center px-2">
         <%= text_input f, :name,
               class: text_input_style(@active_user),
@@ -53,7 +53,7 @@
             to: Routes.live_path(@socket, ShoppingListWeb.PageLive),
             class: "absolute text-lg top-0 right-2" %>
       <p class="font-bold text-lg mb-4">Settings</p>
-      <.form let={f} for={@theme_changeset} action="change_theme">
+      <.form let={f} for={@theme_changeset} phx_submit="change_theme">
         <%= label f, "Theme: ", class: "mr-2" %>
         <%= select f, :theme, theme_list(), class: select_style(@active_user) %>
 
