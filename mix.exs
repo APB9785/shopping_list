@@ -4,7 +4,7 @@ defmodule ShoppingList.MixProject do
   def project do
     [
       app: :shopping_list,
-      version: "1.1.1",
+      version: "1.1.2",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:gettext] ++ Mix.compilers(),
@@ -38,7 +38,7 @@ defmodule ShoppingList.MixProject do
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.7"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_live_view, "~> 0.16.1"},
+      {:phoenix_live_view, "~> 0.16.3"},
       {:floki, ">= 0.27.0", only: :test},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},

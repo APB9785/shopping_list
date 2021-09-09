@@ -16,13 +16,18 @@ defmodule ShoppingListWeb.ClearCategoryModal do
   # Transform the category_list into a keyword list for the selector but don't
   # save it because the full list is not needed
   def update(assigns, socket) do
-    assigns.category_list
-    |> Stream.map(&{&1.name, &1.id})
-    |> Stream.map(fn {name, id} -> {shortener(name), id} end)
-    |> Enum.reject(fn {_name, id} -> id == assigns.category.id end)
-    |> then(&assign(socket, category_select: &1))
-    |> assign(category: assigns.category, active_user: assigns.active_user)
-    |> then(&{:ok, &1})
+    category_select =
+      assigns.category_list
+      |> Stream.map(&{&1.name, &1.id})
+      |> Stream.map(fn {name, id} -> {shortener(name), id} end)
+      |> Enum.reject(fn {_name, id} -> id == assigns.category.id end)
+
+    {:ok,
+     assign(socket,
+       category_select: category_select,
+       category: assigns.category,
+       active_user: assigns.active_user
+     )}
   end
 
   def handle_event("move_items", %{"item" => %{"category_id" => id}}, socket) do

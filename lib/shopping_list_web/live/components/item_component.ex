@@ -15,14 +15,11 @@ defmodule ShoppingListWeb.ItemComponent do
       %User{} ->
         item = socket.assigns.item
         {:ok, new_item} = Items.update_item(item, %{needed: !item.needed})
-        pubsub_broadcast(new_item)
+        message = {:update_one_category, new_item.category_id}
+        Phoenix.PubSub.broadcast(ShoppingList.PubSub, "pubsub", message)
+
         {:noreply, socket}
     end
-  end
-
-  defp pubsub_broadcast(item) do
-    message = {:update_one_category, item.category_id}
-    Phoenix.PubSub.broadcast(ShoppingList.PubSub, "pubsub", message)
   end
 
   defp name_style(%Item{needed: true}), do: "cursor-pointer max-w-max"

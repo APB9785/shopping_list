@@ -50,7 +50,6 @@ defmodule ShoppingListWeb.CategoryComponent do
   end
 
   def handle_event("clear_list", _params, socket) do
-    # item_list = socket.assigns.category.items
     send(self(), {:clear_list, socket.assigns.category})
     {:noreply, socket}
   end

@@ -6,7 +6,7 @@ defmodule ShoppingListWeb.PageLive do
   alias ShoppingList.{Accounts, Categories}
   alias ShoppingList.Accounts.User
   alias ShoppingList.Categories.Category
-  alias ShoppingListWeb.StyleHelpers
+  alias ShoppingListWeb.{Endpoint, PageLive, StyleHelpers}
 
   def mount(_params, session, socket) do
     if connected?(socket), do: Phoenix.PubSub.subscribe(ShoppingList.PubSub, "pubsub")
@@ -53,18 +53,14 @@ defmodule ShoppingListWeb.PageLive do
   end
 
   def handle_event("change_theme", %{"user" => params}, socket) do
-    socket.assigns.active_user
-    |> Accounts.update_user_theme(params)
-    |> elem(1)
-    |> then(
-      &assign(socket,
-        active_user: &1,
-        bg_color: StyleHelpers.background_color(&1),
-        theme_changeset: Accounts.change_user_theme(&1)
-      )
-    )
-    |> then(&push_patch(&1, to: Routes.live_path(&1, ShoppingListWeb.PageLive)))
-    |> then(&{:noreply, &1})
+    {:ok, user} = Accounts.update_user_theme(socket.assigns.active_user, params)
+    color = StyleHelpers.background_color(user)
+    changeset = Accounts.change_user_theme(user)
+
+    {:noreply,
+     socket
+     |> assign(active_user: user, bg_color: color, theme_changeset: changeset)
+     |> push_patch(to: Routes.live_path(Endpoint, PageLive))}
   end
 
   def handle_event("confirm_delete", %{"id" => id}, socket) do
@@ -111,14 +107,12 @@ defmodule ShoppingListWeb.PageLive do
   end
 
   def handle_info({:update_one_category, id}, socket) when is_integer(id) do
-    Categories.get_category!(id)
-    |> then(
-      &Enum.map(socket.assigns.category_list, fn category ->
-        if category.id == id, do: &1, else: category
+    new_category_list =
+      Enum.map(socket.assigns.category_list, fn category ->
+        if category.id == id, do: Categories.get_category!(id), else: category
       end)
-    )
-    |> then(&assign(socket, category_list: &1))
-    |> then(&{:noreply, &1})
+
+    {:noreply, assign(socket, category_list: new_category_list)}
   end
 
   def handle_info({:new_item, category_id, item}, socket) when is_integer(category_id) do
